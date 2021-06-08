@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; //default port 8080
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
 //Object to maintain URL Data
 const urlDatabase = {
@@ -11,6 +12,9 @@ const urlDatabase = {
 
 //body-parser tp read body of request
 app.use(bodyParser.urlencoded({extended: true}));
+
+//Use cookie-parser
+app.use(cookieParser());
 
 //Function to generate a random string of input length to be used as shortURL
 const generateRandomString = function(length) {
@@ -28,18 +32,28 @@ app.set("view engine", "ejs");
 
 //Display database of URLs
 app.get("/urls", (req, res) => {
-  const templateVars = {urls: urlDatabase};
+  const templateVars = {
+    username :req.cookies["username"],
+    urls: urlDatabase
+  };
   res.render("urls_index", templateVars);
 });
 
 //Display form to create new shortURL
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {
+    username :req.cookies["username"]
+  };
+  res.render("urls_new", templateVars);
 });
 
 //Handle GET request to path /urls/:shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
+  const templateVars = {
+    username :req.cookies["username"],
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL]
+  };
   res.render("urls_show", templateVars);
 });
 
