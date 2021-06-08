@@ -26,13 +26,13 @@ const generateRandomString = function(length) {
 //Set EJS as the view engine
 app.set("view engine", "ejs");
 
-//Handle GET request to path /urls
+//Display database of URLs
 app.get("/urls", (req, res) => {
   const templateVars = {urls: urlDatabase};
   res.render("urls_index", templateVars);
 });
 
-//Handle GET request to path /urls/new , renders the form
+//Display form to create new shortURL
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -49,7 +49,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-//Handle POST request to path /urls
+//Create new short URL for input long URL
 app.post("/urls", (req, res) => {
   let newShortURL
   do {
@@ -60,6 +60,13 @@ app.post("/urls", (req, res) => {
   } while(true);
   urlDatabase[newShortURL] = req.body.longURL;
   res.redirect(`/urls/${newShortURL}`);
+});
+
+//Handle delete request from form
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  const templateVars = {urls: urlDatabase};
+  res.render("urls_index", templateVars);
 });
 
 //Server listening
