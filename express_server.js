@@ -2,6 +2,14 @@ const express = require("express");
 const app = express();
 const PORT = 8080; //default port 8080
 const bodyParser = require("body-parser");
+
+//Object to maintain URL Data
+const urlDatabase = {
+  "b2xVn2": "http://www.lighthouselabs.ca",
+  "9sm5xK": "http://www.google.com"
+};
+
+//body-parser tp read body of request
 app.use(bodyParser.urlencoded({extended: true}));
 
 //Function to generate a random string of input length to be used as shortURL
@@ -17,12 +25,6 @@ const generateRandomString = function(length) {
 
 //Set EJS as the view engine
 app.set("view engine", "ejs");
-
-//Object to maintain URL Data
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
 
 //Handle GET request to path /urls
 app.get("/urls", (req, res) => {
@@ -49,7 +51,13 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Handle POST request to path /urls
 app.post("/urls", (req, res) => {
-  const newShortURL = generateRandomString(6);
+  let newShortURL
+  do {
+    newShortURL = generateRandomString(6);
+    if (!Object.keys(urlDatabase).includes(newShortURL)) {
+      break;
+    }
+  } while(true);
   urlDatabase[newShortURL] = req.body.longURL;
   res.redirect(`/urls/${newShortURL}`);
 });
