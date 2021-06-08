@@ -4,6 +4,16 @@ const PORT = 8080; //default port 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+const generateRandomString = function(length) {
+  const characters = 'ABCDEFGHIKJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = "";
+  const range = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * range));
+  }
+  return result;
+};
+
 //Set EJS as the view engine
 app.set("view engine", "ejs");
 
