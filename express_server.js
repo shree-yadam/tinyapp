@@ -66,19 +66,20 @@ app.get("/u/:shortURL", (req, res) => {
 //Login request
 app.post("/login", (req, res) => {
   res
-  .cookie("username",req.body.username)
-  .redirect("/urls");
+    .cookie("username",req.body.username)
+    .redirect("/urls");
 });
 
 //Create new short URL for input long URL
 app.post("/urls", (req, res) => {
-  let newShortURL
+  let newShortURL;
+  let success = false;
   do {
     newShortURL = generateRandomString(6);
     if (!Object.keys(urlDatabase).includes(newShortURL)) {
-      break;
+      success = true;
     }
-  } while(true);
+  } while (!success);
   urlDatabase[newShortURL] = req.body.longURL;
   res.redirect(`/urls/${newShortURL}`);
 });
@@ -92,6 +93,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //Handle Update request
 app.post("/urls/:shortURL", (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.longURL;
+  res.redirect("/urls");
+});
+
+//Handle Logout
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
   res.redirect("/urls");
 });
 
