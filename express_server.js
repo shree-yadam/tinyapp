@@ -49,6 +49,13 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+//Login request
+app.post("/login", (req, res) => {
+  res
+  .cookie("username",req.body.username)
+  .redirect("/urls");
+});
+
 //Create new short URL for input long URL
 app.post("/urls", (req, res) => {
   let newShortURL
