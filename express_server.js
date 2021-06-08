@@ -65,8 +65,13 @@ app.post("/urls", (req, res) => {
 //Handle delete request from form
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
-  const templateVars = {urls: urlDatabase};
-  res.render("urls_index", templateVars);
+  res.redirect("/urls");
+});
+
+//Handle Update request
+app.post("/urls/:shortURL", (req, res) => {
+  urlDatabase[req.params.shortURL] = req.body.longURL;
+  res.redirect("/urls");
 });
 
 //Server listening
