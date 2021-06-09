@@ -104,8 +104,8 @@ app.post("/login", (req, res) => {
   const user = getUserByEmail(email);
   if (!user || user.password !== password) {
     res
-      .status(400)
-      .send("Did not enter proper credentials!!");
+      .status(403)
+      .send("Invalid credentials!!");
     return;
   }
   res
@@ -158,7 +158,7 @@ app.post("/register", (req, res) => {
   if (!email || !password || getUserByEmail(email)) {
     res
       .status(400)
-      .send("Did not enter proper credentials!!");
+      .send("BAD REQUEST!!");
     return;
   }
   let id;
