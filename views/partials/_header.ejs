@@ -11,10 +11,10 @@
       </div>
     </div>
     <div>
-      <% if(!username) {%>
-        <form method="POST" action="/login"><input type="text" name="username" placeholder="Username" size=25 style="border-radius: 5px; border: none;"><input type="submit" value="Login" style="border:1px solid black; background-color: Transparent; margin-left: 5px; border-radius: 5px;"></form>
+      <% if(!user) {%>
+        <form method="POST" action="/login"><input type="text" name="email" placeholder="email" size=25 style="border-radius: 5px; border: none;"><input type="submit" value="Login" style="border:1px solid black; background-color: Transparent; margin-left: 5px; border-radius: 5px;"></form>
       <% } else { %>
-        <form method="POST" action="/logout"><label style="margin-right: 10px;">Logged In As <%= username %>!</label><input type="submit" value="Logout" style="border:1px solid black; background-color: Transparent; margin-left: 5px; border-radius: 5px;"></form>
+        <form method="POST" action="/logout"><label style="margin-right: 10px;">Logged In As <%= user.email %>!</label><input type="submit" value="Logout" style="border:1px solid black; background-color: Transparent; margin-left: 5px; border-radius: 5px;"></form>
       <% } %>
     </div>
   </nav>

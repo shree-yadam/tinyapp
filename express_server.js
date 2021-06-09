@@ -10,6 +10,21 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//Object to store user data 
+// key user ID and value Object with keys id, email and password
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
+
 //body-parser tp read body of request
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -32,25 +47,29 @@ app.set("view engine", "ejs");
 
 //Display database of URLs
 app.get("/urls", (req, res) => {
+  const user_id = req.cookies.user_id;
   const templateVars = {
-    username :req.cookies["username"],
-    urls: urlDatabase
+    urls: urlDatabase,
+    user: users[user_id]
   };
+  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
 //Display form to create new shortURL
 app.get("/urls/new", (req, res) => {
+  const user_id = req.cookies["user_id"];
   const templateVars = {
-    username :req.cookies["username"]
+    user : users[user_id]
   };
   res.render("urls_new", templateVars);
 });
 
 //Handle GET request to path /urls/:shortURL
 app.get("/urls/:shortURL", (req, res) => {
+  const user_id = req.cookies["user_id"];
   const templateVars = {
-    username :req.cookies["username"],
+    user : users[user_id],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]
   };
@@ -98,21 +117,38 @@ app.post("/urls/:shortURL", (req, res) => {
 
 //Handle Logout
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
 //Handle register request
 app.get("/register", (req, res) => {
   const templateVars = {
-    username :req.cookies["username"]
+    user : users[req.cookies["user_id"]]
   };
   res.render("urls_register", templateVars);
 });
 
-// app.post("/register", (req, res) => {
-
-// });
+app.post("/register", (req, res) => {
+  let newUserID;
+  let success = false;
+  do {
+    newUserID = generateRandomString(6);
+    if (!Object.keys(users).includes(newUserID)) {
+      success = true;
+    }
+  } while (!success);
+  const user = {
+    id: newUserID,
+    email: req.body.email,
+    password: req.body.password
+  };
+  users[newUserID] = user;
+  console.log(users);
+  res
+  .cookie("user_id", newUserID)
+  .redirect("/urls");
+});
 
 //Server listening
 app.listen(PORT, () => {
