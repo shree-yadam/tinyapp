@@ -6,15 +6,15 @@ const cookieParser = require('cookie-parser');
 
 //Object to maintain URL Data
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "aJ48lW" },
+  "9sm5xK": { longURL: "http://www.google.com", userID: "aJ48lW"}
 };
 
 //Object to store user data
 // key user ID and value Object with keys id, email and password
 const users = {
   "userRandomID": {
-    id: "userRandomID",
+    id: "aJ48lW",
     email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
@@ -84,14 +84,14 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     user : users[id],
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    longURL: urlDatabase[req.params.shortURL].longURL
   };
   res.render("urls_show", templateVars);
 });
 
 //Handle GET request to path /u/:shortURL
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -121,13 +121,15 @@ app.post("/login", (req, res) => {
 app.post("/urls", (req, res) => {
   let newShortURL;
   let success = false;
+  const userID = req.cookies.user_id;
+  const longURL = req.body.longURL;
   do {
     newShortURL = generateRandomString(6);
     if (!Object.keys(urlDatabase).includes(newShortURL)) {
       success = true;
     }
   } while (!success);
-  urlDatabase[newShortURL] = req.body.longURL;
+  urlDatabase[newShortURL] = {longURL, userID};
   res.redirect(`/urls/${newShortURL}`);
 });
 
@@ -139,7 +141,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //Handle Update request
 app.post("/urls/:shortURL", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL;
+  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   res.redirect("/urls");
 });
 
