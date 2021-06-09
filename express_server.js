@@ -57,28 +57,28 @@ app.set("view engine", "ejs");
 
 //Display database of URLs
 app.get("/urls", (req, res) => {
-  const user_id = req.cookies.user_id;
+  const id = req.cookies.user_id;
   const templateVars = {
     urls: urlDatabase,
-    user: users[user_id]
+    user: users[id]
   };
   res.render("urls_index", templateVars);
 });
 
 //Display form to create new shortURL
 app.get("/urls/new", (req, res) => {
-  const user_id = req.cookies["user_id"];
+  const id = req.cookies.user_id;
   const templateVars = {
-    user : users[user_id]
+    user : users[id]
   };
   res.render("urls_new", templateVars);
 });
 
 //Handle GET request to path /urls/:shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  const user_id = req.cookies["user_id"];
+  const id = req.cookies.user_id;
   const templateVars = {
-    user : users[user_id],
+    user : users[id],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]
   };
@@ -94,7 +94,7 @@ app.get("/u/:shortURL", (req, res) => {
 //Login request
 app.get("/login", (req, res) => {
   const templateVars = {
-    user : users[req.cookies["user_id"]]
+    user : users[req.cookies.user_id]
   };
   res.render("urls_login", templateVars);
 });
@@ -148,7 +148,7 @@ app.post("/logout", (req, res) => {
 //Handle register request
 app.get("/register", (req, res) => {
   const templateVars = {
-    user : users[req.cookies["user_id"]]
+    user : users[req.cookies.user_id]
   };
   res.render("urls_register", templateVars);
 });

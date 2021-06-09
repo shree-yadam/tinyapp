@@ -1,7 +1,8 @@
 <header>
   <nav class="navbar navbar-expand-md navbar-dark bg-success">
     <a class="navbar-brand" href="/urls">TinyApp</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -10,13 +11,15 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <div>
-      <% if(!user) {%>
-        <form method="GET" action="/register"><input type="submit" value="Register" style="border:1px solid black; background-color: Transparent; margin-bottom: 5px; border-radius: 5px;"></form>
-        <form method="GET" action="/login"><input type="submit" value="Login" style="border:1px solid black; background-color: Transparent; margin-top: 5px; border-radius: 5px;"></form>
+    <% if(!user) {%>
+      <a class="navbar-brand" href="/login">Login</a>
+      <a class="navbar-brand" href="/register">Register</a>
       <% } else { %>
-        <form method="POST" action="/logout"><label style="margin-right: 10px;">Logged In As <%= user.email %>!</label><input type="submit" value="Logout" style="border:1px solid black; background-color: Transparent; margin-left: 5px; border-radius: 5px;"></form>
-      <% } %>
-    </div>
+        <form class="form-inline" method="POST" action="/logout">
+          <label style="margin: 5px;">Logged In As <%= user.email %>!</label>
+          <input type="submit" value="Logout"
+            style="border:1px solid black; background-color: Transparent;border-radius: 5px; margin: 5px">
+        </form>
+        <% } %>
   </nav>
 </header>
