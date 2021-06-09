@@ -43,13 +43,13 @@ const generateRandomString = function(length) {
 };
 
 //Check if email present in the database
-const emailLookup = function(email) {
+const getUserByEmail = function(email) {
   for (let id in users) {
     if (users[id].email === email) {
-      return true;
+      return users[id];
     }
   }
-  return false;
+  return null;
 };
 
 //Set EJS as the view engine
@@ -92,9 +92,24 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 //Login request
+app.get("/login", (req, res) => {
+  const templateVars = {
+    user : users[req.cookies["user_id"]]
+  };
+  res.render("urls_login", templateVars);
+});
+
 app.post("/login", (req, res) => {
+  const {email, password} = req.body;
+  const user = getUserByEmail(email);
+  if (!user || user.password !== password) {
+    res
+      .status(400)
+      .send("Did not enter proper credentials!!");
+    return;
+  }
   res
-    .cookie("username",req.body.username)
+    .cookie("user_id", user.id)
     .redirect("/urls");
 });
 
@@ -140,28 +155,24 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const {email, password} = req.body;
-  if (!email || !password || emailLookup(email)) {
+  if (!email || !password || getUserByEmail(email)) {
     res
       .status(400)
       .send("Did not enter proper credentials!!");
     return;
   }
-  let newUserID;
+  let id;
   let success = false;
   do {
-    newUserID = generateRandomString(6);
-    if (!Object.keys(users).includes(newUserID)) {
+    id = generateRandomString(6);
+    if (!Object.keys(users).includes(id)) {
       success = true;
     }
   } while (!success);
-  const user = {
-    email,
-    password,
-    id: newUserID
-  };
-  users[newUserID] = user;
+  const user = {id, email, password};
+  users[id] = user;
   res
-    .cookie("user_id", newUserID)
+    .cookie("user_id", id)
     .redirect("/urls");
 });
 
