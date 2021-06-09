@@ -10,17 +10,17 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-//Object to store user data 
+//Object to store user data
 // key user ID and value Object with keys id, email and password
-const users = { 
+const users = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
 };
@@ -42,6 +42,16 @@ const generateRandomString = function(length) {
   return result;
 };
 
+//Check if email present in the database
+const emailLookup = function(email) {
+  for (let id in users) {
+    if (users[id].email === email) {
+      return true;
+    }
+  }
+  return false;
+};
+
 //Set EJS as the view engine
 app.set("view engine", "ejs");
 
@@ -52,7 +62,6 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     user: users[user_id]
   };
-  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
@@ -130,6 +139,13 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
+  const {email, password} = req.body;
+  if (!email || !password || emailLookup(email)) {
+    res
+      .status(400)
+      .send("Did not enter proper credentials!!");
+    return;
+  }
   let newUserID;
   let success = false;
   do {
@@ -139,15 +155,14 @@ app.post("/register", (req, res) => {
     }
   } while (!success);
   const user = {
-    id: newUserID,
-    email: req.body.email,
-    password: req.body.password
+    email,
+    password,
+    id: newUserID
   };
   users[newUserID] = user;
-  console.log(users);
   res
-  .cookie("user_id", newUserID)
-  .redirect("/urls");
+    .cookie("user_id", newUserID)
+    .redirect("/urls");
 });
 
 //Server listening
