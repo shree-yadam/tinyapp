@@ -1,6 +1,7 @@
 const cookieSession = require('cookie-session');
 const express = require('express');
 const bcrypt = require('bcrypt');
+const {getUserByEmail} = require('./helpers');
 
 const PORT = 8080; //default port 8080
 const SHORT_URL_LENGTH = 6;
@@ -10,10 +11,12 @@ const saltRounds = 10;
 const app = express();
 
 //Object to maintain URL Data
+//{shortURL: {longURL: "", userID: ""}}
 const urlDatabase = {};
 
 //Object to store user data
 // key user ID and value Object with keys id, email and password
+//{id: {id:"" ,  email:"" , password: ""}}
 const users = {};
 
 //Set EJS as the view engine
@@ -39,16 +42,6 @@ const generateRandomString = function(length) {
     result += characters.charAt(Math.floor(Math.random() * range));
   }
   return result;
-};
-
-//Check if email present in the database
-const getUserByEmail = function(email) {
-  for (let id in users) {
-    if (users[id].email === email) {
-      return users[id];
-    }
-  }
-  return null;
 };
 
 //Filtering urls by user id
@@ -121,7 +114,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   // const password = bcrypt.hashSync(req.body.password, saltRounds);
   const {email, password} = req.body;
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(email,users);
   if (!user || !bcrypt.compareSync(password, user.password)) {
     res
       .status(403)
@@ -141,7 +134,7 @@ app.post("/urls", (req, res) => {
   if (!longURL) {
     res
       .status(400)
-      .send("Enter long URL!");
+      .send("Enter URL!");
     return;
   }
   do {
@@ -173,7 +166,7 @@ app.post("/urls/:shortURL", (req, res) => {
   if (!req.body.longURL) {
     res
       .status(400)
-      .send("Enter longURL before Submit!!");
+      .send("Enter URL before Submit!!");
     return;
   }
   
@@ -201,7 +194,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const email = req.body.email;
-  if (!email || !(req.body.password) || getUserByEmail(email)) {
+  if (!email || !(req.body.password) || getUserByEmail(email,users)) {
     res
       .status(400)
       .send("BAD REQUEST!!");
