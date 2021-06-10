@@ -10,25 +10,11 @@ const saltRounds = 10;
 const app = express();
 
 //Object to maintain URL Data
-const urlDatabase = {
-  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "aJ48lW" },
-  "9sm5xK": { longURL: "http://www.google.com", userID: "aJ48lW"}
-};
+const urlDatabase = {};
 
 //Object to store user data
 // key user ID and value Object with keys id, email and password
-const users = {
-  // "aJ48lW": {
-  //   id: "aJ48lW",
-  //   email: "user@example.com",
-  //   password: bcrypt.hashSync("purple-monkey-dinosaur", saltRounds)
-  // },
-  // "user2RandomID": {
-  //   id: "user2RandomID",
-  //   email: "user2@example.com",
-  //   password: bcrypt.hashSync("dishwasher-funk", saltRounds)
-  // }
-};
+const users = {};
 
 //Set EJS as the view engine
 app.set("view engine", "ejs");
