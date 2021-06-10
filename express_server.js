@@ -1,9 +1,13 @@
-const express = require("express");
-const app = express();
-const PORT = 8080; //default port 8080
+const express = require('express');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+
+const PORT = 8080; //default port 8080
 const SHORT_URL_LENGTH = 6;
 const USER_ID_LENGTH = 6;
+const saltRounds = 10;
+
+const app = express();
 
 //Object to maintain URL Data
 const urlDatabase = {
@@ -14,16 +18,16 @@ const urlDatabase = {
 //Object to store user data
 // key user ID and value Object with keys id, email and password
 const users = {
-  "aJ48lW": {
-    id: "aJ48lW",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }
+  // "aJ48lW": {
+  //   id: "aJ48lW",
+  //   email: "user@example.com",
+  //   password: bcrypt.hashSync("purple-monkey-dinosaur", saltRounds)
+  // },
+  // "user2RandomID": {
+  //   id: "user2RandomID",
+  //   email: "user2@example.com",
+  //   password: bcrypt.hashSync("dishwasher-funk", saltRounds)
+  // }
 };
 
 //Set EJS as the view engine
@@ -126,9 +130,10 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  // const password = bcrypt.hashSync(req.body.password, saltRounds);
   const {email, password} = req.body;
   const user = getUserByEmail(email);
-  if (!user || user.password !== password) {
+  if (!user || !bcrypt.compareSync(password, user.password)) {
     res
       .status(403)
       .send("Invalid credentials!!");
@@ -194,13 +199,14 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const {email, password} = req.body;
-  if (!email || !password || getUserByEmail(email)) {
+  const email = req.body.email;
+  if (!email || !(req.body.password) || getUserByEmail(email)) {
     res
-      .status(400)
-      .send("BAD REQUEST!!");
+    .status(400)
+    .send("BAD REQUEST!!");
     return;
   }
+  const password = bcrypt.hashSync(req.body.password, saltRounds);
   let id;
   let success = false;
   do {
@@ -218,5 +224,5 @@ app.post("/register", (req, res) => {
 
 //Server listening
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`TinyApp listening on port ${PORT}!`);
 });
