@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; //default port 8080
-const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
 //Object to maintain URL Data
@@ -26,7 +25,9 @@ const users = {
 };
 
 //body-parser tp read body of request
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.urlencoded({
+  extended: true
+}));
 
 //Use cookie-parser
 app.use(cookieParser());
