@@ -25,6 +25,7 @@
               <th scope="col">Long URL</th>
               <th scope="col">Date Created (mm/dd/yyyy)</th>
               <th scope="col">Number of times visited</th>
+              <th scope="col">Number of unique visits</th>
             </tr>
           </thead>
           <tbody>
@@ -41,6 +42,9 @@
                 </td>
                 <td>
                   <%= urls[url].visitCount %>
+                </td>
+                <td>
+                  <%= urls[url].uniqueVisitCount %>
                 </td>
                 <td>
                   <form method="POST" action="/urls/<%= url %>/delete"><input type="submit" value="Delete"></form>

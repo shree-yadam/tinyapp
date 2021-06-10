@@ -11,7 +11,7 @@ const saltRounds = 10;
 const app = express();
 
 //Object to maintain URL Data
-//Format: {shortURL: {longURL: "", userID: "", date: , visitCount:}}
+//Format: {shortURL: {longURL: "", userID: "", date: , visitCount:, uniqueVisitCount}}
 const urlDatabase = {};
 
 //Object to store user data
@@ -120,6 +120,10 @@ app.get("/u/:shortURL", (req, res) => {
     res.status(404).send("NOT FOUND!");
     return;
   }
+  if (!req.session.visitID) {
+    req.session.visitID = generateRandomString(USER_ID_LENGTH);
+    urlDatabase[req.params.shortURL].uniqueVisitCount += 1;
+  }
   urlDatabase[req.params.shortURL].visitCount++;
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
@@ -174,7 +178,7 @@ app.post("/urls", (req, res) => {
     }
   } while (!success);
   let date = getDate();
-  urlDatabase[newShortURL] = {longURL, userID, date, visitCount: 0};
+  urlDatabase[newShortURL] = {longURL, userID, date, visitCount: 0, uniqueVisitCount: 0};
   res.redirect(`/urls/${newShortURL}`);
 });
 
