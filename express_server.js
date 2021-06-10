@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const PORT = 8080; //default port 8080
 const cookieParser = require('cookie-parser');
+const SHORT_URL_LENGTH = 6;
+const USER_ID_LENGTH = 6;
 
 //Object to maintain URL Data
 const urlDatabase = {
@@ -23,6 +25,9 @@ const users = {
     password: "dishwasher-funk"
   }
 };
+
+//Set EJS as the view engine
+app.set("view engine", "ejs");
 
 //body-parser tp read body of request
 app.use(express.urlencoded({
@@ -64,8 +69,8 @@ const urlsForUser = function(id) {
   return databaseForUser;
 };
 
-//Set EJS as the view engine
-app.set("view engine", "ejs");
+//addNewUser - TBD
+//authenticateUSer - TBD
 
 //Display database of URLs
 app.get("/urls", (req, res) => {
@@ -95,7 +100,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const id = req.cookies.user_id;
   const shortURL = req.params.shortURL;
   if (id !== urlDatabase[shortURL].userID) {
-    res.send("Login error. Cannot edit/delete!");
+    res.status(401).send("Unauthorized Access!");
     return;
   }
   const templateVars = {
@@ -141,7 +146,7 @@ app.post("/urls", (req, res) => {
   const userID = req.cookies.user_id;
   const longURL = req.body.longURL;
   do {
-    newShortURL = generateRandomString(6);
+    newShortURL = generateRandomString(SHORT_URL_LENGTH);
     if (!Object.keys(urlDatabase).includes(newShortURL)) {
       success = true;
     }
@@ -155,7 +160,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   const id = req.cookies.user_id;
   const shortURL = req.params.shortURL;
   if (id !== urlDatabase[shortURL].userID) {
-    res.send("Login error. Cannot edit/delete!");
+    res.status(401).send("Unauthorized Access!");
     return;
   }
   delete urlDatabase[req.params.shortURL];
@@ -167,7 +172,7 @@ app.post("/urls/:shortURL", (req, res) => {
   const id = req.cookies.user_id;
   const shortURL = req.params.shortURL;
   if (id !== urlDatabase[shortURL].userID) {
-    res.send("Login error. Cannot edit/delete!");
+    res.status(401).send("Unauthorized Access!");
     return;
   }
   urlDatabase[req.params.shortURL].longURL = req.body.longURL;
@@ -199,7 +204,7 @@ app.post("/register", (req, res) => {
   let id;
   let success = false;
   do {
-    id = generateRandomString(6);
+    id = generateRandomString(USER_ID_LENGTH);
     if (!Object.keys(users).includes(id)) {
       success = true;
     }
