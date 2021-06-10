@@ -6,15 +6,15 @@ This project is made as an project during week 3 of Lighthouse Labs Bootcamp. Th
 
 ## Final Product
 ###### Login Page
-!["Login Page"](login.png)
+!["Login Page"](docs/login.png)
 ###### Register Page
-!["Register Page"](register.png)
+!["Register Page"](docs/register.png)
 ###### Short URL List of user logged in
-!["Logged in User Short URL List"](user_shortURL_list.png)
+!["Logged in User Short URL List"](docs/user_shortURL_list.png)
 ###### Create new short URL page
-!["Create new short URL"](createNew.png)
+!["Create new short URL"](docs/createNew.png)
 ###### Update page
-!["update URL"](update.png)
+!["update URL"](docs/update.png)
 ## Dependencies
 
 - Node.js
