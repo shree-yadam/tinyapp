@@ -23,6 +23,8 @@
             <tr>
               <th scope="col">Short URL</th>
               <th scope="col">Long URL</th>
+              <th scope="col">Date Created (mm/dd/yyyy)</th>
+              <th scope="col">Number of times visited</th>
             </tr>
           </thead>
           <tbody>
@@ -33,6 +35,12 @@
                 </td>
                 <td>
                   <%= urls[url].longURL %>
+                </td>
+                <td>
+                  <%= urls[url].date %>
+                </td>
+                <td>
+                  <%= urls[url].visitCount %>
                 </td>
                 <td>
                   <form method="POST" action="/urls/<%= url %>/delete"><input type="submit" value="Delete"></form>

@@ -1,7 +1,7 @@
 const cookieSession = require('cookie-session');
 const express = require('express');
 const bcrypt = require('bcrypt');
-const {getUserByEmail, generateRandomString} = require('./helpers');
+const {getUserByEmail, generateRandomString, getDate} = require('./helpers');
 
 const PORT = 8080; //default port 8080
 const SHORT_URL_LENGTH = 6;
@@ -11,7 +11,7 @@ const saltRounds = 10;
 const app = express();
 
 //Object to maintain URL Data
-//Format: {shortURL: {longURL: "", userID: ""}}
+//Format: {shortURL: {longURL: "", userID: "", date: , visitCount:}}
 const urlDatabase = {};
 
 //Object to store user data
@@ -106,8 +106,10 @@ app.get("/urls/:shortURL", (req, res) => {
   }
   const templateVars = {
     user : users[id],
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL
+    shortURL,
+    longURL: urlDatabase[shortURL].longURL,
+    date: urlDatabase[shortURL].date,
+    visitCount: urlDatabase[shortURL].visitCount
   };
   res.render("urls_show", templateVars);
 });
@@ -118,6 +120,7 @@ app.get("/u/:shortURL", (req, res) => {
     res.status(404).send("NOT FOUND!");
     return;
   }
+  urlDatabase[req.params.shortURL].visitCount++;
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
@@ -170,7 +173,8 @@ app.post("/urls", (req, res) => {
       success = true;
     }
   } while (!success);
-  urlDatabase[newShortURL] = {longURL, userID};
+  let date = getDate();
+  urlDatabase[newShortURL] = {longURL, userID, date, visitCount: 0};
   res.redirect(`/urls/${newShortURL}`);
 });
 

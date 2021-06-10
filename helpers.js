@@ -19,4 +19,15 @@ const generateRandomString = function(length) {
   return result;
 };
 
-module.exports = {getUserByEmail, generateRandomString};
+//Returns Date in mm/dd/yyyy format
+const getDate = function() {
+  let date = new Date();
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+  const yyyy = date.getFullYear();
+
+  date = mm + '/' + dd + '/' + yyyy;
+  return date;
+};
+
+module.exports = { getUserByEmail, generateRandomString, getDate };
