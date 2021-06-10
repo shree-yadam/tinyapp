@@ -58,6 +58,15 @@ const urlsForUser = function(id) {
 //addNewUser - TBD
 //authenticateUSer - TBD
 
+app.get("/", (req, res) => {
+  const id = req.session.userID;
+  if (!id) {
+    res.redirect("/login");
+    return;
+  }
+  res.redirect("/urls");
+});
+
 //Display database of URLs
 app.get("/urls", (req, res) => {
   const id = req.session.userID;
