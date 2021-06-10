@@ -13,7 +13,7 @@ const urlDatabase = {
 //Object to store user data
 // key user ID and value Object with keys id, email and password
 const users = {
-  "userRandomID": {
+  "aJ48lW": {
     id: "aJ48lW",
     email: "user@example.com",
     password: "purple-monkey-dinosaur"
@@ -52,6 +52,17 @@ const getUserByEmail = function(email) {
   return null;
 };
 
+//Filtering urls by user id
+const urlsForUser = function(id) {
+  const databaseForUser = {};
+  for (let key in urlDatabase) {
+    if (urlDatabase[key].userID === id) {
+      databaseForUser[key] = urlDatabase[key];
+    }
+  }
+  return databaseForUser;
+};
+
 //Set EJS as the view engine
 app.set("view engine", "ejs");
 
@@ -59,7 +70,7 @@ app.set("view engine", "ejs");
 app.get("/urls", (req, res) => {
   const id = req.cookies.user_id;
   const templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(id),
     user: users[id]
   };
   res.render("urls_index", templateVars);
