@@ -92,6 +92,11 @@ app.get("/urls/new", (req, res) => {
 //Handle GET request to path /urls/:shortURL
 app.get("/urls/:shortURL", (req, res) => {
   const id = req.cookies.user_id;
+  const shortURL = req.params.shortURL;
+  if (id !== urlDatabase[shortURL].userID) {
+    res.send("Login error. Cannot edit/delete!");
+    return;
+  }
   const templateVars = {
     user : users[id],
     shortURL: req.params.shortURL,
@@ -146,12 +151,24 @@ app.post("/urls", (req, res) => {
 
 //Handle delete request from form
 app.post("/urls/:shortURL/delete", (req, res) => {
+  const id = req.cookies.user_id;
+  const shortURL = req.params.shortURL;
+  if (id !== urlDatabase[shortURL].userID) {
+    res.send("Login error. Cannot edit/delete!");
+    return;
+  }
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
 });
 
 //Handle Update request
 app.post("/urls/:shortURL", (req, res) => {
+  const id = req.cookies.user_id;
+  const shortURL = req.params.shortURL;
+  if (id !== urlDatabase[shortURL].userID) {
+    res.send("Login error. Cannot edit/delete!");
+    return;
+  }
   urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   res.redirect("/urls");
 });
