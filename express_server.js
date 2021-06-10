@@ -1,5 +1,5 @@
+const cookieSession = require('cookie-session');
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 
 const PORT = 8080; //default port 8080
@@ -25,7 +25,10 @@ app.use(express.urlencoded({
 }));
 
 //Use cookie-parser
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2']
+}));
 
 //Function to generate a random string of input length to be used as shortURL
 const generateRandomString = function(length) {
@@ -64,7 +67,7 @@ const urlsForUser = function(id) {
 
 //Display database of URLs
 app.get("/urls", (req, res) => {
-  const id = req.cookies.user_id;
+  const id = req.session.userID;
   const templateVars = {
     urls: urlsForUser(id),
     user: users[id]
@@ -74,7 +77,7 @@ app.get("/urls", (req, res) => {
 
 //Display form to create new shortURL
 app.get("/urls/new", (req, res) => {
-  const id = req.cookies.user_id;
+  const id = req.session.userID;
   if (!id) {
     res.redirect("/login");
     return;
@@ -87,7 +90,7 @@ app.get("/urls/new", (req, res) => {
 
 //Handle GET request to path /urls/:shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  const id = req.cookies.user_id;
+  const id = req.session.userID;
   const shortURL = req.params.shortURL;
   if (id !== urlDatabase[shortURL].userID) {
     res.status(401).send("Unauthorized Access!");
@@ -110,7 +113,7 @@ app.get("/u/:shortURL", (req, res) => {
 //Login request
 app.get("/login", (req, res) => {
   const templateVars = {
-    user : users[req.cookies.user_id]
+    user : users[req.session.userID]
   };
   res.render("urls_login", templateVars);
 });
@@ -125,17 +128,22 @@ app.post("/login", (req, res) => {
       .send("Invalid credentials!!");
     return;
   }
-  res
-    .cookie("user_id", user.id)
-    .redirect("/urls");
+  req.session.userID = user.id;
+  res.redirect("/urls");
 });
 
 //Create new short URL for input long URL
 app.post("/urls", (req, res) => {
   let newShortURL;
   let success = false;
-  const userID = req.cookies.user_id;
+  const userID = req.session.userID;
   const longURL = req.body.longURL;
+  if (!longURL) {
+    res
+      .status(400)
+      .send("Enter long URL!");
+    return;
+  }
   do {
     newShortURL = generateRandomString(SHORT_URL_LENGTH);
     if (!Object.keys(urlDatabase).includes(newShortURL)) {
@@ -148,7 +156,7 @@ app.post("/urls", (req, res) => {
 
 //Handle delete request from form
 app.post("/urls/:shortURL/delete", (req, res) => {
-  const id = req.cookies.user_id;
+  const id = req.session.userID;
   const shortURL = req.params.shortURL;
   if (id !== urlDatabase[shortURL].userID) {
     res.status(401).send("Unauthorized Access!");
@@ -160,8 +168,15 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //Handle Update request
 app.post("/urls/:shortURL", (req, res) => {
-  const id = req.cookies.user_id;
+  const id = req.session.userID;
   const shortURL = req.params.shortURL;
+  if (!req.body.longURL) {
+    res
+      .status(400)
+      .send("Enter longURL before Submit!!");
+    return;
+  }
+  
   if (id !== urlDatabase[shortURL].userID) {
     res.status(401).send("Unauthorized Access!");
     return;
@@ -172,14 +187,14 @@ app.post("/urls/:shortURL", (req, res) => {
 
 //Handle Logout
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect("/urls");
 });
 
 //Handle register request
 app.get("/register", (req, res) => {
   const templateVars = {
-    user : users[req.cookies.user_id]
+    user : users[req.session.userID]
   };
   res.render("urls_register", templateVars);
 });
@@ -188,8 +203,8 @@ app.post("/register", (req, res) => {
   const email = req.body.email;
   if (!email || !(req.body.password) || getUserByEmail(email)) {
     res
-    .status(400)
-    .send("BAD REQUEST!!");
+      .status(400)
+      .send("BAD REQUEST!!");
     return;
   }
   const password = bcrypt.hashSync(req.body.password, saltRounds);
@@ -203,9 +218,8 @@ app.post("/register", (req, res) => {
   } while (!success);
   const user = {id, email, password};
   users[id] = user;
-  res
-    .cookie("user_id", id)
-    .redirect("/urls");
+  req.session.userID = id;
+  res.redirect("/urls");
 });
 
 //Server listening
