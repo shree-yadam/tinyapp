@@ -23,6 +23,7 @@ This project is made as an project during week 3 of Lighthouse Labs Bootcamp. Th
 - bcrypt
 - body-parser
 - cookie-session
+- method-override
 
 ## Getting Started
 

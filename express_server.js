@@ -1,5 +1,6 @@
 const cookieSession = require('cookie-session');
 const express = require('express');
+const methodOverride = require('method-override');
 const bcrypt = require('bcrypt');
 const {getUserByEmail, generateRandomString, getDate} = require('./helpers');
 
@@ -18,6 +19,9 @@ const urlDatabase = {};
 // key user ID and value Object with keys id, email and password
 //Format: {id: {id:"" ,  email:"" , password: ""}}
 const users = {};
+
+// override with POST having ?_method=DELETE
+app.use(methodOverride('_method'));
 
 //Set EJS as the view engine
 app.set("view engine", "ejs");
@@ -109,7 +113,8 @@ app.get("/urls/:shortURL", (req, res) => {
     shortURL,
     longURL: urlDatabase[shortURL].longURL,
     date: urlDatabase[shortURL].date,
-    visitCount: urlDatabase[shortURL].visitCount
+    visitCount: urlDatabase[shortURL].visitCount,
+    uniqueVisitCount: urlDatabase[shortURL].uniqueVisitCount
   };
   res.render("urls_show", templateVars);
 });
@@ -183,7 +188,7 @@ app.post("/urls", (req, res) => {
 });
 
 //Handle delete request from form
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL", (req, res) => {
   const id = req.session.userID;
   const shortURL = req.params.shortURL;
   if (id !== urlDatabase[shortURL].userID) {
@@ -195,7 +200,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 //Handle Update request
-app.post("/urls/:shortURL", (req, res) => {
+app.put("/urls/:shortURL", (req, res) => {
   const id = req.session.userID;
   const shortURL = req.params.shortURL;
   if (id !== urlDatabase[shortURL].userID) {

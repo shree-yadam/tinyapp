@@ -47,10 +47,10 @@
                   <%= urls[url].uniqueVisitCount %>
                 </td>
                 <td>
-                  <form method="POST" action="/urls/<%= url %>/delete"><input type="submit" value="Delete"></form>
+                  <form method="POST" action="/urls/<%= url %>?_method=DELETE"><input type="submit" value="Delete"></form>
                 </td>
                 <td>
-                  <form method="GET" action="/urls/<%= url %>">
+                  <form method="GET" action="/urls/<%= url %>?_method=PUT">
                     <input type="submit" value="Edit">
                   </form>
                 </td>
@@ -60,7 +60,7 @@
         </table>
       <% } %>
     </main>
-    <p style="left: 50%; position: absolute; bottom: 10px;"><a href="/urls/new">Click her to shorten another URL</a></p>
+    <p style="left: 50%; position: absolute; bottom: 10px;"><a href="/urls/new">Click here to shorten another URL</a></p>
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

@@ -15,10 +15,11 @@
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
         <p class="card-text">Date Created: <%= date %></p>
         <p class="card-text">Number of times visited: <%= visitCount %></p>
+        <p class="card-text">Number of unique visits: <%= uniqueVisitCount %></p>
       </div>
-    <div class="card-footer text-muted"><form method="POST" action="/urls/<%= shortURL %>"><label>New URL<input type="text" name="longURL" placeholder="<%= longURL%>" size=<%= longURL.length %></label><input type="submit" value="Update"></form></div>
+    <div class="card-footer text-muted"><form method="POST" action="/urls/<%= shortURL %>?_method=PUT"><label>New URL<input type="text" name="longURL" placeholder="<%= longURL%>" size=<%= longURL.length %></label><input type="submit" value="Update"></form></div>
   </div>
-  <p style="left: 50%; position: absolute; bottom: 10px;"><a href="/urls/new">Click her to shorten another URL</a></p>
+  <p style="left: 50%; position: absolute; bottom: 10px;"><a href="/urls/new">Click here to shorten another URL</a></p>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
